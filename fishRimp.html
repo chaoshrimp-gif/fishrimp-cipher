@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🐠🦐FiShrimpCipher🦐🐠</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      margin: 40px;
+      background: #f5f8fa;
+      color: #222;
+    }
+    h1 { font-size: 2em; margin-bottom: 20px; }
+    textarea {
+      width: 90%;
+      height: 120px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #008cba;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover { background-color: #006b8f; }
+  </style>
+</head>
+<body>
+  <h1>🐠🦐FiShrimpCipher🦐🐠</h1>
+  <textarea id="input" placeholder="Type your message here..."></textarea><br>
+  <button onclick="encodeText()">Encrypt (English → Cipher)</button>
+  <button onclick="decodeText()">Decrypt (Cipher → English)</button><br>
+  <textarea id="output" placeholder="Your translated text will appear here..."></textarea>
+
+  <script>
+    // Letter mappings (from your PDF)
+    const letterMap = {
+      a: "5", b: "(", c: "/", d: "8", e: "-", f: "3", g: "¿", h: "0", i: "?",
+      j: "^", k: "4", l: ",", m: "&", n: "1", o: "\"", p: "6", q: ";", r: "*",
+      s: "2", t: "!", u: ".", v: "7", w: "#", x: ")", y: "9", z: "¡"
+    };
+
+    // Word mappings (from your PDF)
+    const wordMap = {
+      "she": "✂", "her": "⚙", "he": "✈", "his": "🎆", "they": "🍽", "their": "📌",
+      "them": "🔶", "hers": "⚠", "his": "🐾", "i": "🌾", "my": "🦵", "you": "🌋",
+      "yours": "🌚", "and": "🕧", "to": "🕖", "yes": "🕙", "no": "🕦", "with": "⚓",
+      "a": "🐸", "is": "🦉", "are": "🌻", "we": "🐍", "it": "🦐", "of": "🦄",
+      "in": "🐠", "for": "👁", "at": "👽", "will": "👾", "this": "🤡", "that": "👂",
+      "what": "🕺", "when": "👄", "where": "👊", "why": "💃", "who": "🫦", "how": "🤞",
+      "so": "👀", "but": "🤠", "if": "💀", "then": "🌈", "(laugh)": "☄"
+    };
+
+    // Create reverse maps for decoding
+    const reverseLetterMap = Object.fromEntries(Object.entries(letterMap).map(([k, v]) => [v, k]));
+    const reverseWordMap = Object.fromEntries(Object.entries(wordMap).map(([k, v]) => [v, k]));
+
+    function encodeText() {
+      let text = document.getElementById("input").value.toLowerCase();
+
+      // Replace whole words with emojis first
+      for (const [word, emoji] of Object.entries(wordMap)) {
+        const regex = new RegExp(`\\b${word}\\b`, "g");
+        text = text.replace(regex, emoji);
+      }
+
+      // Replace letters
+      text = text.split("").map(ch => letterMap[ch] || ch).join("");
+      document.getElementById("output").value = text;
+    }
+
+    function decodeText() {
+      let text = document.getElementById("input").value;
+
+      // Replace emojis back to words
+      for (const [emoji, word] of Object.entries(reverseWordMap)) {
+        text = text.replaceAll(emoji, word);
+      }
+
+      // Replace cipher symbols back to letters
+      for (const [symbol, letter] of Object.entries(reverseLetterMap)) {
+        const safeSymbol = symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(safeSymbol, "g");
+        text = text.replace(regex, letter);
+      }
+
+      document.getElementById("output").value = text;
+    }
+  </script>
+</body>
+</html>
